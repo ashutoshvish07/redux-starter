@@ -1,8 +1,15 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loginAPI } from "./../store/auth/auth.action";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  
+  const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuth } = useSelector((store) => store.auth);
+  
   const [loginCreds, setLoginCreds] = useState({
     email: "eve.holt@reqres.in",
     password: "cityslicka",
@@ -19,12 +26,22 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // TODO
-    navigate("/");
+    dispatch(loginAPI(loginCreds));
+    // navigate("/");
   };
+
+  useEffect(() => {
+     //console.log(location);
+    // console.log(isAuth)
+    if (isAuth) {
+      console.log(location);
+      navigate(location.pathname || "/", { replace: true });
+    }
+  }, [isAuth]);
 
   return (
     <div>
-      Login
+     <h1>Login page</h1>
       <form
         onSubmit={handleSubmit}
         style={{
@@ -39,7 +56,7 @@ const Login = () => {
           data-cy="login-email"
           name="email"
           type="email"
-          placeholder="Enter Email"
+          placeholder="lovly@gmail.com"
           value={loginCreds.email}
           onChange={hanldeChange}
         />
